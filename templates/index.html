@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/static/style.css">
+    <title>SearchRight</title>
+</head>
+<body>
+    <h1>SearchRight</h1>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <label for="file">Upload a Markdown file:</label>
+        <input type="file" id="file" name="file" accept=".md">
+        <button type="submit">Upload</button>
+    </form>
+    
+    {% if blocks %}
+        <h2>Click on a block to find similar ones:</h2>
+        <ul>
+        {% for idx, block in enumerate(blocks) %}
+            <li>
+                <form action="/find_similar" method="post">
+                    <input type="hidden" name="clicked_block" value="{{ block }}">
+                    <input type="hidden" name="blocks" value="{{ blocks }}">
+                    <input type="hidden" name="embeddings" value="{{ embeddings }}">
+                    <button type="submit">Block {{ idx+1 }}</button>: {{ block }}
+                </form>
+            </li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% if similar_blocks %}
+        <h2>Similar Blocks:</h2>
+        <ul>
+        {% for similar_block, score in similar_blocks %}
+            <li>({{ score }}) {{ similar_block }}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+
+    <h2>Wikipedia Search</h2>
+    <form action="/search_wikipedia" method="post">
+        <label for="query">Enter text to search on Wikipedia:</label>
+        <input type="text" id="query" name="query">
+        <button type="submit">Search</button>
+    </form>
+    
+    {% if wikipedia_content %}
+        <h3>Wikipedia Results:</h3>
+        <ul>
+        {% for paragraph in wikipedia_content %}
+            <li>{{ paragraph }}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+
+</body>
+</html>
